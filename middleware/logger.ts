@@ -22,7 +22,7 @@ const logEvents = async (message: string, logFileName: string) => {
   } catch (error) {
     console.log(error);
   }
-  console.log("Logger: " + logItem);
+  console.log("Logger: " + logItem.replace("\n", ""));
 };
 
 const logger = (req: Request, res: Response, next: NextFunction): void => {

@@ -1,30 +1,54 @@
+// Loading environment files
+import { load } from "dotenv-extended";
+load();
+
+// All imports should be kept here 👇
 import express from "express";
 import OTHER_ROUTES from "./routes/otherRoutes";
-import { ROUTES_CONST, SERVER_CONST } from "./constants";
 import MAIN_ROUTES from "./routes/mainRoutes";
 import API_ROUTES from "./routes/apiRoutes";
-import { logger } from "./middleware/logger";
+import { logEvents, logger } from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import corsOptions from "./config/corsOptions";
+import connectDB from "./DB/dbConn";
+import mongoose from "mongoose";
 
-//INITIALIZING APP
+console.log("Server: Environment is: ", process.env.NODE_ENV);
+
+//Mongo Database Connection
+connectDB();
+
+//Initializing app
 const app = express();
 
-// MIDDLEWARE
-app.use(logger); //REGISTERING LOGGER MIDDLEWARE
-app.use(cors(corsOptions)); //REGISTERING CORS MIDDLEWARE
-app.use(express.json()); //REGISTERING JSON MIDDLEWARE
-app.use(errorHandler); //REGISTERING ERROR MIDDLEWARE
-app.use(cookieParser()); //REGISTERING COOKIE-PARSER MIDDLEWARE
+// Middleware
+app.use(logger); //Registering logger middleware
+app.use(cors(corsOptions)); //Registering cors middleware
+app.use(express.json()); //Registering json middleware
+app.use(errorHandler); //Registering error middleware
+app.use(cookieParser()); //Registering cookie-parser middleware
 
-// REGISTERING ROUTES
+// Registering routes
 app.use(MAIN_ROUTES);
 app.use(API_ROUTES);
 app.use(OTHER_ROUTES);
 
-//STARTING SERVER
-app.listen(SERVER_CONST.PORT, () =>
-  console.log("Server is running on port " + SERVER_CONST.PORT)
-);
+// Mongo event listners
+mongoose.connection.once("open", () => {
+  console.info("MongoDB: Connected");
+  //Starting server
+  const port = process.env.SERVER_PORT || 3500;
+  app.listen(port, () =>
+    console.log("Server: ", "Running at http://localhost:" + port)
+  );
+});
+
+mongoose.connection.on("error", (err) => {
+  logEvents(
+    `${err.name}: ${err.code}\n${err.message}\n${err.syscall}\n${err.hostname}`,
+    "err-mongo-logs"
+  );
+  console.error(err);
+});

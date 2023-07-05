@@ -26,5 +26,5 @@ app.use(OTHER_ROUTES);
 
 //STARTING SERVER
 app.listen(SERVER_CONST.PORT, () =>
-  console.log("Server is running on port " + SERVER_CONST.PORT)
+  console.log("Server is running at http://localhost:" + SERVER_CONST.PORT)
 );

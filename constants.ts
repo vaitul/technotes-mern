@@ -1,6 +1,4 @@
-export const SERVER_CONST = {
-  PORT: process.env.PORT || 3500,
-};
+export const SERVER_CONST = {};
 
 export const ROUTES_CONST = {
   ANY: "*",

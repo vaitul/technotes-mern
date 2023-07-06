@@ -1,8 +1,3 @@
-// Loading environment files
-import { load } from "dotenv-extended";
-load();
-
-// All imports should be kept here 👇
 import express from "express";
 import OTHER_ROUTES from "./routes/otherRoutes";
 import MAIN_ROUTES from "./routes/mainRoutes";
@@ -15,7 +10,7 @@ import corsOptions from "./config/corsOptions";
 import connectDB from "./DB/dbConn";
 import mongoose from "mongoose";
 
-console.log("Server: Environment is: ", process.env.NODE_ENV);
+console.log("Server: Environment is: ", process.env.NX_NODE_ENV);
 
 //Mongo Database Connection
 connectDB();
@@ -39,7 +34,7 @@ app.use(OTHER_ROUTES);
 mongoose.connection.once("open", () => {
   console.info("MongoDB: Connected");
   //Starting server
-  const port = process.env.SERVER_PORT || 3500;
+  const port = process.env.NX_SERVER_PORT || 3500;
   app.listen(port, () =>
     console.log("Server: ", "Running at http://localhost:" + port)
   );
